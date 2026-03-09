@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code-to-Card Generator</title>
+
+  <!-- Google Fonts: JetBrains Mono + Syne -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Prism.js for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" id="prism-theme-link" />
+
+  <!-- Main styles -->
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="preview.css" />
+</head>
+<body>
+
+  <!-- ══════════════════ TOP BAR ══════════════════ -->
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="topbar__logo">⬡</span>
+      <span class="topbar__name">Code<em>Card</em></span>
+    </div>
+    <nav class="topbar__actions">
+      <button class="btn btn--ghost" id="btnRandomGradient" title="Random gradient">
+        🎲 Random
+      </button>
+      <button class="btn btn--ghost" id="btnSavePreset" title="Save current preset">
+        💾 Save Preset
+      </button>
+      <button class="btn btn--primary" id="btnDownload">
+        ↓ Export PNG
+      </button>
+    </nav>
+  </header>
+
+  <!-- ══════════════════ MAIN LAYOUT ══════════════════ -->
+  <main class="app-layout">
+
+    <!-- ─────────── LEFT PANEL: Editor + Controls ─────────── -->
+    <aside class="panel panel--left">
+
+      <!-- Code Editor -->
+      <section class="editor-section">
+        <div class="section-label">
+          <span class="section-label__dot"></span>
+          Code Editor
+          <button class="btn btn--tiny" id="btnCopyCode" title="Copy code">Copy</button>
+        </div>
+
+        <!-- Language selector -->
+        <div class="language-row">
+          <select id="languageSelect" class="select">
+            <option value="javascript">JavaScript</option>
+            <option value="typescript">TypeScript</option>
+            <option value="python">Python</option>
+            <option value="css">CSS</option>
+            <option value="html">HTML</option>
+            <option value="bash">Bash</option>
+            <option value="java">Java</option>
+            <option value="csharp">C#</option>
+            <option value="rust">Rust</option>
+            <option value="go">Go</option>
+          </select>
+          <input id="fileNameInput" class="input" type="text" placeholder="filename.js" value="index.js" />
+        </div>
+
+        <!-- The raw textarea (hidden during preview but used as source) -->
+        <div class="editor-wrapper">
+          <textarea id="codeInput" class="code-textarea" spellcheck="false" placeholder="// Paste your code here…
+
+const greet = (name) => {
+  return `Hello, ${name}! 👋`;
+};
+
+console.log(greet('World'));"></textarea>
+        </div>
+      </section>
+
+      <!-- ─── Preset Templates ─── -->
+      <section class="presets-section">
+        <div class="section-label"><span class="section-label__dot"></span>Presets</div>
+        <div class="presets-grid">
+          <button class="preset-btn" data-preset="twitter">🐦 Twitter</button>
+          <button class="preset-btn" data-preset="linkedin">💼 LinkedIn</button>
+          <button class="preset-btn" data-preset="minimal">◻ Minimal</button>
+          <button class="preset-btn" data-preset="neon">⚡ Neon</button>
+          <button class="preset-btn" data-preset="sunset">🌅 Sunset</button>
+          <button class="preset-btn" data-preset="ocean">🌊 Ocean</button>
+        </div>
+        <!-- Saved presets will be injected here -->
+        <div id="savedPresetsList" class="saved-presets"></div>
+      </section>
+
+      <!-- ─── Customisation Controls ─── -->
+      <section class="controls-section">
+        <div class="section-label"><span class="section-label__dot"></span>Customise</div>
+
+        <div class="controls-grid">
+
+          <!-- Background gradient start -->
+          <label class="control-label">Gradient Start</label>
+          <div class="control-row">
+            <input type="color" id="gradientStart" class="color-picker" value="#6366f1" />
+            <span class="color-hex" id="gradientStartHex">#6366f1</span>
+          </div>
+
+          <!-- Background gradient end -->
+          <label class="control-label">Gradient End</label>
+          <div class="control-row">
+            <input type="color" id="gradientEnd" class="color-picker" value="#8b5cf6" />
+            <span class="color-hex" id="gradientEndHex">#8b5cf6</span>
+          </div>
+
+          <!-- Gradient angle -->
+          <label class="control-label">Gradient Angle <span id="angleVal">135</span>°</label>
+          <input type="range" id="gradientAngle" class="range-input" min="0" max="360" value="135" />
+
+          <!-- Padding -->
+          <label class="control-label">Padding <span id="paddingVal">48</span>px</label>
+          <input type="range" id="paddingRange" class="range-input" min="16" max="96" value="48" />
+
+          <!-- Border radius -->
+          <label class="control-label">Border Radius <span id="radiusVal">16</span>px</label>
+          <input type="range" id="radiusRange" class="range-input" min="0" max="40" value="16" />
+
+          <!-- Font size -->
+          <label class="control-label">Font Size <span id="fontSizeVal">14</span>px</label>
+          <input type="range" id="fontSizeRange" class="range-input" min="10" max="24" value="14" />
+
+          <!-- Window style -->
+          <label class="control-label">Window Style</label>
+          <div class="segmented" id="windowStyleGroup">
+            <button class="seg-btn active" data-value="mac">Mac</button>
+            <button class="seg-btn" data-value="windows">Win</button>
+            <button class="seg-btn" data-value="minimal">None</button>
+          </div>
+
+          <!-- Code theme -->
+          <label class="control-label">Code Theme</label>
+          <div class="segmented" id="codeThemeGroup">
+            <button class="seg-btn active" data-value="dark">Dark</button>
+            <button class="seg-btn" data-value="light">Light</button>
+          </div>
+
+          <!-- Shadow toggle -->
+          <label class="control-label">Card Shadow</label>
+          <div class="segmented" id="shadowGroup">
+            <button class="seg-btn active" data-value="on">On</button>
+            <button class="seg-btn" data-value="off">Off</button>
+          </div>
+
+          <!-- Watermark -->
+          <label class="control-label">Watermark</label>
+          <div class="segmented" id="watermarkGroup">
+            <button class="seg-btn active" data-value="on">On</button>
+            <button class="seg-btn" data-value="off">Off</button>
+          </div>
+
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- ─────────── RIGHT PANEL: Live Preview ─────────── -->
+    <section class="panel panel--right">
+      <div class="section-label">
+        <span class="section-label__dot"></span>
+        Live Preview
+        <span class="preview-badge">Real-time</span>
+      </div>
+
+      <div class="preview-stage" id="previewStage">
+        <!-- The exportable card -->
+        <div class="card-wrapper" id="cardWrapper">
+
+          <!-- Card background (gradient) -->
+          <div class="card-bg" id="cardBg">
+
+            <!-- Inner code card -->
+            <div class="code-card" id="codeCard">
+
+              <!-- Window chrome: Mac dots / Windows buttons / Minimal bar -->
+              <div class="window-chrome" id="windowChrome">
+
+                <!-- Mac style -->
+                <div class="chrome chrome--mac" id="chromeMac">
+                  <span class="dot dot--red"></span>
+                  <span class="dot dot--yellow"></span>
+                  <span class="dot dot--green"></span>
+                  <span class="chrome__filename" id="chromeFilenameMac"></span>
+                </div>
+
+                <!-- Windows style -->
+                <div class="chrome chrome--windows" id="chromeWindows">
+                  <span class="chrome__filename chrome__filename--win" id="chromeFilenameWin"></span>
+                  <div class="win-btns">
+                    <span class="win-btn win-btn--min">─</span>
+                    <span class="win-btn win-btn--max">□</span>
+                    <span class="win-btn win-btn--close">✕</span>
+                  </div>
+                </div>
+
+                <!-- Minimal style: just filename -->
+                <div class="chrome chrome--minimal" id="chromeMinimal">
+                  <span class="chrome__filename chrome__filename--minimal" id="chromeFilenameMin"></span>
+                </div>
+
+              </div>
+
+              <!-- Code area with Prism highlight -->
+              <div class="code-body" id="codeBody">
+                <pre class="code-pre" id="codePre"><code id="codeHighlight" class="language-javascript"></code></pre>
+              </div>
+
+              <!-- Watermark -->
+              <div class="card-watermark" id="cardWatermark">made with CodeCard</div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ══════════════════ TOAST NOTIFICATION ══════════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ══════════════════ SCRIPTS ══════════════════ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

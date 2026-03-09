@@ -1,0 +1,224 @@
+/* ═══════════════════════════════════════════════════════════════
+   preview.css — Styles for the exportable code card
+   These are applied to #cardWrapper and its children
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Card wrapper: centres the card in the stage ── */
+.card-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+}
+
+/* ── Card background: gradient canvas ── */
+.card-bg {
+  /* Controlled via JS CSS variables */
+  background: linear-gradient(
+    var(--card-angle, 135deg),
+    var(--card-g1, #6366f1),
+    var(--card-g2, #8b5cf6)
+  );
+  padding: var(--card-padding, 48px);
+  border-radius: var(--card-outer-radius, 24px);
+  transition: padding 0.2s ease, border-radius 0.2s ease, background 0.3s ease;
+}
+
+/* Shadow on/off */
+.card-bg.shadow-on {
+  box-shadow:
+    0 32px 80px rgba(0,0,0,0.55),
+    0 8px 24px rgba(0,0,0,0.35);
+}
+
+/* ── Inner code card ── */
+.code-card {
+  background: var(--code-card-bg, #1e1e2e);
+  border-radius: var(--card-inner-radius, 12px);
+  overflow: hidden;
+  min-width: 360px;
+  max-width: 680px;
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.25s ease, border-radius 0.2s ease;
+  position: relative;
+}
+
+/* ══════════════════════════════════════════
+   WINDOW CHROME STYLES
+══════════════════════════════════════════ */
+.window-chrome {
+  position: relative;
+}
+
+/* All chrome variants hidden by default; JS toggles display */
+.chrome { display: none; }
+
+/* ── Mac Chrome ── */
+.chrome--mac {
+  background: var(--chrome-mac-bg, #2a2a3a);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot--red    { background: #ff5f57; box-shadow: 0 0 0 1px rgba(0,0,0,0.2); }
+.dot--yellow { background: #febc2e; box-shadow: 0 0 0 1px rgba(0,0,0,0.2); }
+.dot--green  { background: #28c840; box-shadow: 0 0 0 1px rgba(0,0,0,0.2); }
+
+.chrome__filename {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  margin-left: 8px;
+  letter-spacing: 0.3px;
+}
+
+/* ── Windows Chrome ── */
+.chrome--windows {
+  background: var(--chrome-win-bg, #1f1f2e);
+  padding: 8px 0 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.chrome__filename--win {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+}
+
+.win-btns {
+  display: flex;
+}
+.win-btn {
+  width: 46px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  cursor: default;
+  user-select: none;
+}
+.win-btn--close { background: #e81123; color: #fff; }
+.win-btn--max:hover { background: rgba(255,255,255,0.1); }
+.win-btn--min:hover { background: rgba(255,255,255,0.1); }
+
+/* ── Minimal Chrome ── */
+.chrome--minimal {
+  padding: 10px 16px 0;
+  display: flex;
+  align-items: center;
+}
+.chrome__filename--minimal {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.5px;
+}
+
+/* ══════════════════════════════════════════
+   CODE BODY
+══════════════════════════════════════════ */
+.code-body {
+  padding: 20px 20px 16px;
+  overflow: auto;
+}
+
+.code-pre {
+  margin: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-size: var(--code-font-size, 14px) !important;
+  line-height: 1.7 !important;
+  tab-size: 2;
+  white-space: pre;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* Override Prism background */
+.code-pre code,
+.code-pre code[class*="language-"] {
+  background: transparent !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+  padding: 0 !important;
+  text-shadow: none !important;
+}
+
+/* ══════════════════════════════════════════
+   LIGHT THEME OVERRIDES
+══════════════════════════════════════════ */
+.theme-light .code-card {
+  background: #fafafa;
+  border-color: rgba(0,0,0,0.08);
+}
+.theme-light .chrome--mac {
+  background: #e8e8ed;
+  border-bottom-color: rgba(0,0,0,0.08);
+}
+.theme-light .chrome--windows {
+  background: #f0f0f5;
+  border-bottom-color: rgba(0,0,0,0.08);
+}
+.theme-light .chrome__filename,
+.theme-light .chrome__filename--win,
+.theme-light .chrome__filename--minimal {
+  color: rgba(0,0,0,0.35);
+}
+.theme-light .win-btn { color: rgba(0,0,0,0.5); }
+
+/* ── Light code colors (simple palette) ── */
+.theme-light .code-pre,
+.theme-light .code-pre code {
+  color: #1e1e2e !important;
+}
+.theme-light .token.comment   { color: #6b7280 !important; }
+.theme-light .token.keyword   { color: #7c3aed !important; }
+.theme-light .token.string    { color: #059669 !important; }
+.theme-light .token.number    { color: #d97706 !important; }
+.theme-light .token.function  { color: #2563eb !important; }
+.theme-light .token.operator  { color: #374151 !important; }
+.theme-light .token.punctuation { color: #6b7280 !important; }
+
+/* ══════════════════════════════════════════
+   WATERMARK
+══════════════════════════════════════════ */
+.card-watermark {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.6px;
+  color: rgba(255,255,255,0.2);
+  text-align: right;
+  padding: 0 20px 14px;
+  user-select: none;
+}
+.theme-light .card-watermark {
+  color: rgba(0,0,0,0.18);
+}
+
+/* ══════════════════════════════════════════
+   PRISM DARK THEME TWEAKS
+   (complement tomorrow theme)
+══════════════════════════════════════════ */
+code[class*="language-"],
+pre[class*="language-"] {
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* Line numbers hint for long files */
+.code-body::-webkit-scrollbar { height: 4px; width: 4px; }
+.code-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
